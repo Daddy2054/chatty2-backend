@@ -30,6 +30,12 @@ class LoginController extends Controller
                 'data' => 'no valid data',
                 'msg' => $validator->errors()->first(),
             ];
+        } else {
+            return [
+                'code' => 1,
+                'data' => 'valid data',
+                'msg' => 'success',
+            ];
         }
     }
 }
