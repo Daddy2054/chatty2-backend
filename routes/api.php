@@ -18,4 +18,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/index', 'App\Http\Controllers\TestController@index');
+//Route::get('/index', 'App\Http\Controllers\TestController@index');
+Route::group(['namespace' => 'Api'], function() {
+    Route::any('/login', 'LoginController@login');
+    Route::any('/get_profile', 'LoginController@get_profile');
+});
