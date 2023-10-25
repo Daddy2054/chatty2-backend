@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Carbon;
+use Illuminate\Support\Facades\DB;
+use Exception;
 
 class LoginController extends Controller
 {
@@ -30,11 +33,32 @@ class LoginController extends Controller
                 'data' => 'no valid data',
                 'msg' => $validator->errors()->first(),
             ];
-        } else {
+        } //else {
+        //     return [
+        //         'code' => 1,
+        //         'data' => 'valid data',
+        //         'msg' => 'success',
+        //     ];
+        // }
+
+        $validated = $validator->validated();
+        $map = [];
+        $map['type'] = $validated['type'];
+        $map['open_id'] = $validated['open_id'];
+        $result = DB::table('users')->select(
+            'avatar',
+            'name',
+            'description',
+            'type',
+            'token',
+            'access_token',
+            'online'
+        )->where($map)->first();
+        if (empty($result)) {
             return [
-                'code' => 1,
-                'data' => 'valid data',
-                'msg' => 'success',
+                'code' => 0,
+                'data' => $result,
+                'msg' => 'no user found'
             ];
         }
     }
