@@ -82,7 +82,7 @@ class LoginController extends Controller
                 );
                 $result->access_token = $access_token;
                 return [
-                    'code' => 1,
+                    'code' => 0,
                     'data' => $result,
                     'msg' => 'User information updated',
                 ];
