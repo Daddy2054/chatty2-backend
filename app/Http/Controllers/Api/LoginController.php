@@ -77,6 +77,15 @@ class LoginController extends Controller
                 'msg' => 'user has been created'
             ];
         } else {
+            $access_token = md5(uniqid() . rand(1000000, 9999999));
+            $expire_date = Carbon::now()->addDays(30);
+            $user_id = DB::table('users')->where($map)->update(
+                [
+                    "access_token" => $access_token,
+                    "expire_date" => $expire_date,
+                ]
+            );
+            $result->access_token = $access_token;
             return [
                 'code' => 1,
                 'data' => $result,
