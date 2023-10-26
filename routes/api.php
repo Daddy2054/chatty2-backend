@@ -23,4 +23,5 @@ Route::group(['namespace' => 'Api'], function() {
     Route::any('/login', 'LoginController@login')
     ->withoutMiddleware("throttle:api");
     Route::any('/get_profile', 'LoginController@get_profile');
+    Route::any('/contact', 'LoginController@contact');
 });

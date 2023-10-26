@@ -95,4 +95,19 @@ class LoginController extends Controller
             ];
         }
     }
+    /// define route first. otherwise postman will give error in lecture 78
+    public function contact(Request $request)
+    {
+
+        $token = $request->user_token;
+        $res = DB::table('users')->select(
+            'avatar',
+            'description',
+            'online',
+            'token'
+        //)->get();
+          )->where('token', '=', $token)->get();
+
+        return ['code' => 0, 'data' => $res, 'msg' => 'got all the users info'];
+    }
 }
