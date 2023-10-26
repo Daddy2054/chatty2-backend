@@ -20,6 +20,8 @@ class CheckUser
                 401
             );
         }
+        $access_token = trim(ltrim($Authorization, 'Bearer'));
 
+        return $next($request);
     }
 }
