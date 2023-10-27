@@ -24,8 +24,17 @@ class CheckUser
         }
         $access_token = trim(ltrim($Authorization, 'Bearer'));
         $res_user = DB::table('users')->where('access_token', $access_token)
-            ->select('id', 'avatar', 'name', 'token', 'access_token', 'expire_date')
-            ->first();
+            ->select(
+                'id',
+                'avatar',
+                'name',
+                'token',
+                'type',
+                'access_token',
+                'expire_date',
+                 )
+              //   ->get();
+                ->first();
 
         if (empty($res_user)) {
             return response(
@@ -65,6 +74,11 @@ class CheckUser
                 ->where('access_token', $access_token)
                 ->update(['expire_date' => $add_expire_date]);
         }
+        $request->user_id = $res_user->id;
+        $request->user_type = $res_user->type;
+        $request->user_name = $res_user->name;
+        $request->user_avatar = $res_user->avatar;
+        $request->user_token = $res_user->token;
         return $next($request);
     }
 }
