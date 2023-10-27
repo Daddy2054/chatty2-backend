@@ -104,7 +104,8 @@ class LoginController extends Controller
             'avatar',
             'description',
             'online',
-            'token'
+            'token',
+            'name',
         //)->get();
           )->where('token', '=', $token)->get();
 
