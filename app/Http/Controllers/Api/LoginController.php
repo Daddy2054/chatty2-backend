@@ -107,7 +107,7 @@ class LoginController extends Controller
             'token',
             'name',
         //)->get();
-          )->where('token', '=', $token)->get();
+          )->where('token', '!=', $token)->get();
 
         return ['code' => 0, 'data' => $res, 'msg' => 'got all the users info'];
     }
