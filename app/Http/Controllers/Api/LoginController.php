@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Contract\Messaging; 
 
 class LoginController extends Controller
 {
@@ -136,6 +138,17 @@ class LoginController extends Controller
             ->first();
         if (empty($res)) {
             return ['code' => -1, 'data' => '', 'msg' => 'user does not exist'];
+        }
+
+
+        $device_token = $res->fcmtoken;
+        try {
+if(!empty($device_token) ){
+$messaging = app('firebase.messaging');
+}
+
+        } catch (\Exception $e) {
+            return ['code' => -1, 'data' => '', 'msg' => (string) $e];
         }
 
 
