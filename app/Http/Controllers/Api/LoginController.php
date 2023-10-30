@@ -111,4 +111,16 @@ class LoginController extends Controller
 
         return ['code' => 0, 'data' => $res, 'msg' => 'got all the users info'];
     }
+
+    public function send_notice(Request $request){
+        //caller information
+        $user_token = $request->user_token;
+        $user_avatar = $request->user_avatar;
+        $user_name = $request->user_name;
+
+        //callee information
+        $to_token = $request->input('to_token');
+
+        return ['code'=>0, 'data'=>$to_token, 'msg'=>'success'];
+    }
 }
