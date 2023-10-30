@@ -9,7 +9,8 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Kreait\Firebase\Messaging\CloudMessage;
-use Kreait\Firebase\Contract\Messaging; 
+
+//use Kreait\Firebase\Contract\Messaging;
 
 class LoginController extends Controller
 {
@@ -143,11 +144,37 @@ class LoginController extends Controller
 
         $device_token = $res->fcmtoken;
         try {
-if(!empty($device_token) ){
-$messaging = app('firebase.messaging');
-}
+            if (!empty($device_token)) {
+                $messaging = app('firebase.messaging');
+                if ($call_type == 'cancel') {
+                    $message = CloudMessage::withTarget('token', $device_token)
+                        ->withData([
+                            'token' => $user_token,
+                            'avatar' => $user_avatar,
+                            'name' => $user_name,
+                            'doc_id' => $doc_id,
+                            'call_type' => $call_type,
+                        ], );
+                    $messaging->send($message);
+                } else if ($call_type == 'voice') {
+                    $message = CloudMessage::withTarget('token', $device_token)
+                        ->withData([
+                            'token' => $user_token,
+                            'avatar' => $user_avatar,
+                            'name' => $user_name,
+                            'doc_id' => $doc_id,
+                            'call_type' => $call_type,
+                        ], );
+                    $messaging->send($message);
+                    
+                }
 
-        } catch (\Exception $e) {
+            } else {
+                return ['code' => -1, 'data' => '', 'msg' => 'device token is empty'];
+
+            }
+
+        } catch (Exception $e) {
             return ['code' => -1, 'data' => '', 'msg' => (string) $e];
         }
 
