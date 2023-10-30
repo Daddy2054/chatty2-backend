@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Exception;
 use Kreait\Firebase\Messaging\CloudMessage;
 
-//use Kreait\Firebase\Contract\Messaging;
+use Kreait\Firebase\Contract\Messaging;
 
 class LoginController extends Controller
 {
@@ -156,17 +156,29 @@ class LoginController extends Controller
                             'call_type' => $call_type,
                         ], );
                     $messaging->send($message);
-                } else if ($call_type == 'voice') {
-                    $message = CloudMessage::withTarget('token', $device_token)
-                        ->withData([
-                            'token' => $user_token,
-                            'avatar' => $user_avatar,
-                            'name' => $user_name,
-                            'doc_id' => $doc_id,
-                            'call_type' => $call_type,
-                        ], );
-                    $messaging->send($message);
-                    
+       
+                }else if($call_type == 'voice'){
+
+                    $message = CloudMessage::fromArray([
+                        'token'=>$device_token,
+                        'data'=>[
+                            'token'=>$user_token,
+                            'avatar'=>$user_avatar,
+                            'name'=>$user_name,
+                            'doc_id'=>$doc_id,
+                            'call_type'=>$call_type,
+                        ],
+
+                        'android'=>[
+                            'priority'=>'high',
+                            'notification'=>[
+                                'channel_id'=>'aaa',
+                                'title'=>'Voice call made by'.$user_name,
+                                'body'=>'Please click to answer the voice call.'
+                            ],
+                        ],
+                    ]);
+
                 }
 
             } else {
