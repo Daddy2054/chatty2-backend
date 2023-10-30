@@ -124,14 +124,15 @@ class LoginController extends Controller
 
         //callee information
         $to_token = $request->input('to_token');
-        $to_avatar = $request->input('to_avatar');
-        $user_name = $request->input('to_name');
         $call_type = $request->input('call_type');
-        $doc_id = $request->input('doc_id');
 
-        if (empty($doc_id)) {
-            $doc_id = '';
-        }
+        // $to_avatar = $request->input('to_avatar');
+        // $user_name = $request->input('to_name');
+        // $doc_id = $request->input('doc_id');
+
+        // if (empty($doc_id)) {
+        //     $doc_id = '';
+        // }
         //get the other user
         $res = DB::table('users')
             ->select('avatar', 'name', 'token', 'fcmtoken')
@@ -147,37 +148,40 @@ class LoginController extends Controller
             if (!empty($device_token)) {
                 $messaging = app('firebase.messaging');
                 if ($call_type == 'cancel') {
-                    $message = CloudMessage::withTarget('token', $device_token)
-                        ->withData([
-                            'token' => $user_token,
-                            'avatar' => $user_avatar,
-                            'name' => $user_name,
-                            'doc_id' => $doc_id,
-                            'call_type' => $call_type,
-                        ], );
+                    $message = CloudMessage::fromArray([
+                        'token'=>$device_token,
+                        'data'=>[
+                            'token'=>$user_token,
+                            'avatar'=>$user_avatar,
+                            'name'=>$user_name,
+            //                'doc_id'=>$doc_id,
+                            'call_type'=>$call_type,
+                        ],
+                    ]);
+
                     $messaging->send($message);
 
                 } else if ($call_type == 'voice') {
-
                     $message = CloudMessage::fromArray([
-                        'token' => $device_token,
-                        'data' => [
-                            'token' => $user_token,
-                            'avatar' => $user_avatar,
-                            'name' => $user_name,
-                            'doc_id' => $doc_id,
-                            'call_type' => $call_type,
+                        'token'=>$device_token,
+                        'data'=>[
+                            'token'=>$user_token,
+                            'avatar'=>$user_avatar,
+                            'name'=>$user_name,
+              //              'doc_id'=>$doc_id,
+                            'call_type'=>$call_type,
                         ],
 
-                        'android' => [
-                            'priority' => 'high',
-                            'notification' => [
-                                'channel_id' => 'aaa',
-                                'title' => 'Voice call made by' . $user_name,
-                                'body' => 'Please click to answer the voice call.'
+                        'android'=>[
+                            'priority'=>'high',
+                            'notification'=>[
+                                'channel_id'=>'aaa',
+                                'title'=>'Voice call made by '.$user_name,
+                                'body'=>'Please click to answer the voice call.'
                             ],
                         ],
                     ]);
+                    $messaging->send($message);
 
                 }
 
