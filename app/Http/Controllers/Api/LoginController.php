@@ -106,13 +106,14 @@ class LoginController extends Controller
             'online',
             'token',
             'name',
-        //)->get();
-          )->where('token', '!=', $token)->get();
+            //)->get();
+        )->where('token', '!=', $token)->get();
 
         return ['code' => 0, 'data' => $res, 'msg' => 'got all the users info'];
     }
 
-    public function send_notice(Request $request){
+    public function send_notice(Request $request)
+    {
         //caller information
         $user_token = $request->user_token;
         $user_avatar = $request->user_avatar;
@@ -120,7 +121,25 @@ class LoginController extends Controller
 
         //callee information
         $to_token = $request->input('to_token');
+        $to_avatar = $request->input('to_avatar');
+        $user_name = $request->input('to_name');
+        $call_type = $request->input('call_type');
+        $doc_id = $request->input('doc_id');
 
-        return ['code'=>0, 'data'=>$to_token, 'msg'=>'success'];
+        if (empty($doc_id)) {
+            $doc_id = '';
+        }
+        //get the other user
+        $res = DB::table('users')
+            ->select('avatar', 'name', 'token', 'fcmtoken')
+            ->where('token', '=', $to_token)
+            ->first();
+        if (empty($res)) {
+            return ['code' => -1, 'data' => '', 'msg' => 'user does not exist'];
+        }
+
+
+        //code 0 means success
+        return ['code' => 0, 'data' => $to_token, 'msg' => 'success'];
     }
 }
