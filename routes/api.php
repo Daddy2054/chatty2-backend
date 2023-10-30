@@ -24,4 +24,5 @@ Route::group(['namespace' => 'Api'], function () {
         ->withoutMiddleware("throttle:api");
  //   Route::any('/get_profile', 'LoginController@get_profile');
     Route::any('/contact', 'LoginController@contact')->middleware('CheckUser');
+    Route::any('/get_rtc_token', 'AccessTokenController@get_rtc_token')->middleware('CheckUser');
 });
