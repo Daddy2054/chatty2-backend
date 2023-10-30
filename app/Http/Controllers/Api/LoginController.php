@@ -156,25 +156,25 @@ class LoginController extends Controller
                             'call_type' => $call_type,
                         ], );
                     $messaging->send($message);
-       
-                }else if($call_type == 'voice'){
+
+                } else if ($call_type == 'voice') {
 
                     $message = CloudMessage::fromArray([
-                        'token'=>$device_token,
-                        'data'=>[
-                            'token'=>$user_token,
-                            'avatar'=>$user_avatar,
-                            'name'=>$user_name,
-                            'doc_id'=>$doc_id,
-                            'call_type'=>$call_type,
+                        'token' => $device_token,
+                        'data' => [
+                            'token' => $user_token,
+                            'avatar' => $user_avatar,
+                            'name' => $user_name,
+                            'doc_id' => $doc_id,
+                            'call_type' => $call_type,
                         ],
 
-                        'android'=>[
-                            'priority'=>'high',
-                            'notification'=>[
-                                'channel_id'=>'aaa',
-                                'title'=>'Voice call made by'.$user_name,
-                                'body'=>'Please click to answer the voice call.'
+                        'android' => [
+                            'priority' => 'high',
+                            'notification' => [
+                                'channel_id' => 'aaa',
+                                'title' => 'Voice call made by' . $user_name,
+                                'body' => 'Please click to answer the voice call.'
                             ],
                         ],
                     ]);
@@ -193,5 +193,18 @@ class LoginController extends Controller
 
         //code 0 means success
         return ['code' => 0, 'data' => $to_token, 'msg' => 'success'];
+    }
+
+
+    public function bind_fcmtoken(Request $request)
+    {
+        $token = $request->user_token;
+        $fcmtoken = $request->input('fcmtoken');
+        if (empty($fcmtoken)) {
+            return ['code' => -1, 'data' => '', 'msg' => 'error getting the token'];
+        }
+        DB::table('users')->where('token', '=', $token)->update(['fcmtoken' => $fcmtoken]);
+        return ['code' => 0, 'data' => '', 'msg' => 'success'];
+
     }
 }
