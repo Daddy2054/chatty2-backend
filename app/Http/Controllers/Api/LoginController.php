@@ -126,13 +126,13 @@ class LoginController extends Controller
         $to_token = $request->input('to_token');
         $call_type = $request->input('call_type');
 
-        // $to_avatar = $request->input('to_avatar');
-        // $user_name = $request->input('to_name');
-        // $doc_id = $request->input('doc_id');
+        $to_avatar = $request->input('to_avatar');
+        $user_name = $request->input('to_name');
+        $doc_id = $request->input('doc_id');
 
-        // if (empty($doc_id)) {
-        //     $doc_id = '';
-        // }
+        if (empty($doc_id)) {
+            $doc_id = '';
+        }
         //get the other user
         $res = DB::table('users')
             ->select('avatar', 'name', 'token', 'fcmtoken')
@@ -154,8 +154,16 @@ class LoginController extends Controller
                             'token'=>$user_token,
                             'avatar'=>$user_avatar,
                             'name'=>$user_name,
-            //                'doc_id'=>$doc_id,
+                            'doc_id'=>$doc_id,
                             'call_type'=>$call_type,
+                        ],
+                        'android'=>[
+                            'priority'=>'high',
+                            'notification'=>[
+                                'channel_id'=>'aaa',
+                                'title'=>$user_name. ' had cancelled a voice call',
+                                'body'=>'Please take a note about this call.'
+                            ],
                         ],
                     ]);
 
@@ -168,7 +176,7 @@ class LoginController extends Controller
                             'token'=>$user_token,
                             'avatar'=>$user_avatar,
                             'name'=>$user_name,
-              //              'doc_id'=>$doc_id,
+                            'doc_id'=>$doc_id,
                             'call_type'=>$call_type,
                         ],
 
