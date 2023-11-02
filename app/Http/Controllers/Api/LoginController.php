@@ -226,9 +226,10 @@ class LoginController extends Controller
         try {
             $extension = $file->getClientOriginalExtension();
             $fullFileName = uniqid() . '.' . $extension;
-            $timeDir = date('YMD');
+            $timeDir = date('Ymd');
             $file->storeAs($timeDir, $fullFileName, ['disk' => 'public']);
-            $url = env('APP_URL') . '/uploads/' . $timeDir . '/' . $fullFileName;
+            //      $url = env('APP_URL') . '/uploads/' . $timeDir . '/' . $fullFileName;
+            $url = $timeDir . '/' . $fullFileName;
             return ['code' => 0, 'data' => $url, 'msg' => 'success image uploading'];
         } catch (Exception $e) {
             return ['code' => -1, 'data' => '', 'msg' => 'error uploading image'];
