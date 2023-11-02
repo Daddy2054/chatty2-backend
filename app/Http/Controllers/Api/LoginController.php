@@ -149,20 +149,20 @@ class LoginController extends Controller
                 $messaging = app('firebase.messaging');
                 if ($call_type == 'cancel') {
                     $message = CloudMessage::fromArray([
-                        'token'=>$device_token,
-                        'data'=>[
-                            'token'=>$user_token,
-                            'avatar'=>$user_avatar,
-                            'name'=>$user_name,
-                            'doc_id'=>$doc_id,
-                            'call_type'=>$call_type,
+                        'token' => $device_token,
+                        'data' => [
+                            'token' => $user_token,
+                            'avatar' => $user_avatar,
+                            'name' => $user_name,
+                            'doc_id' => $doc_id,
+                            'call_type' => $call_type,
                         ],
-                        'android'=>[
-                            'priority'=>'high',
-                            'notification'=>[
-                                'channel_id'=>'aaa',
-                                'title'=>$user_name. ' had cancelled a voice call',
-                                'body'=>'Please take a note about this call.'
+                        'android' => [
+                            'priority' => 'high',
+                            'notification' => [
+                                'channel_id' => 'aaa',
+                                'title' => $user_name . ' had cancelled a voice call',
+                                'body' => 'Please take a note about this call.'
                             ],
                         ],
                     ]);
@@ -171,21 +171,21 @@ class LoginController extends Controller
 
                 } else if ($call_type == 'voice') {
                     $message = CloudMessage::fromArray([
-                        'token'=>$device_token,
-                        'data'=>[
-                            'token'=>$user_token,
-                            'avatar'=>$user_avatar,
-                            'name'=>$user_name,
-                            'doc_id'=>$doc_id,
-                            'call_type'=>$call_type,
+                        'token' => $device_token,
+                        'data' => [
+                            'token' => $user_token,
+                            'avatar' => $user_avatar,
+                            'name' => $user_name,
+                            'doc_id' => $doc_id,
+                            'call_type' => $call_type,
                         ],
 
-                        'android'=>[
-                            'priority'=>'high',
-                            'notification'=>[
-                                'channel_id'=>'aaa',
-                                'title'=>'Voice call made by '.$user_name,
-                                'body'=>'Please click to answer the voice call.'
+                        'android' => [
+                            'priority' => 'high',
+                            'notification' => [
+                                'channel_id' => 'aaa',
+                                'title' => 'Voice call made by ' . $user_name,
+                                'body' => 'Please click to answer the voice call.'
                             ],
                         ],
                     ]);
@@ -218,5 +218,20 @@ class LoginController extends Controller
         DB::table('users')->where('token', '=', $token)->update(['fcmtoken' => $fcmtoken]);
         return ['code' => 0, 'data' => '', 'msg' => 'success'];
 
+    }
+
+    public function upload_photo(Request $request)
+    {
+        $file = $request->file('file');
+        try {
+            $extension = $file->getClientOriginalExtension();
+            $fullFileName = uniqid() . '.' . $extension;
+            $timeDir = date('YMD');
+            $file->storeAs($timeDir, $fullFileName, ['disk' => 'public']);
+            $url = env('APP_URL') . '/uploads/' . $timeDir . '/' . $fullFileName;
+            return ['code' => 0, 'data' => $url, 'msg' => 'success image uploading'];
+        } catch (Exception $e) {
+            return ['code' => -1, 'data' => '', 'msg' => 'error uploading image'];
+        }
     }
 }
