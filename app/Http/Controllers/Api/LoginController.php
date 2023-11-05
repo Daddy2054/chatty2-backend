@@ -167,7 +167,7 @@ class LoginController extends Controller
                         ],
                     ]);
 
-                    $messaging->send($message);
+  //                  $messaging->send($message);
 
                 } else if ($call_type == 'voice') {
                     $message = CloudMessage::fromArray([
@@ -189,9 +189,31 @@ class LoginController extends Controller
                             ],
                         ],
                     ]);
-                    $messaging->send($message);
+                    
+                } else if ($call_type == 'video') {
+                    $message = CloudMessage::fromArray([
+                        'token' => $device_token,
+                        'data' => [
+                            'token' => $user_token,
+                            'avatar' => $user_avatar,
+                            'name' => $user_name,
+                            'doc_id' => $doc_id,
+                            'call_type' => $call_type,
+                        ],
 
+                        'android' => [
+                            'priority' => 'high',
+                            'notification' => [
+                                'channel_id' => 'aaa',
+                                'title' => 'Video call made by ' . $user_name,
+                                'body' => 'Please click to answer the video call.'
+                            ],
+                        ],
+                    ]);
+                    
                 }
+
+                $messaging->send($message);
 
             } else {
                 return ['code' => -1, 'data' => '', 'msg' => 'device token is empty'];
