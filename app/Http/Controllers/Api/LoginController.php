@@ -263,7 +263,7 @@ class LoginController extends Controller
     {
         $token = $request->user_token;
 
-    //    $user = $request->user();
+        $user = $request->user_id;
         $validator = Validator::make($request->all(), [
             'avatar' => 'required',
             'name' => 'required',
@@ -280,13 +280,13 @@ class LoginController extends Controller
         try {
             $validated = $validator->validated();
             $map = [];
-         //   $map['id'] = $user->id;
+            $map['id'] = $user;
             $map["token"] = $token;
 
             $res = User::where($map)->first();
             if (!empty($res)) {
                 $validated['updated_at'] = Carbon::now();
-        DB::table("users")->where($map)->update($validated);
+     //   DB::table("users")->where($map)->update($validated);
 
                 User::where($map)->update($validated);
                 return [
@@ -296,7 +296,7 @@ class LoginController extends Controller
                     'msg' => 'user has been updated',
                 ];
             }
-            return ['code' => -1, 'data' => '', 'msg' => 'error'];
+            return ['code' => -1, 'data' => '', 'msg' => 'error updating user data'];
 
         } catch (\Throwable $th) {
             return [
