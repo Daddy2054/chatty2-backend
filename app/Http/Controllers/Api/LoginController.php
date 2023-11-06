@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Carbon;
@@ -167,7 +168,7 @@ class LoginController extends Controller
                         ],
                     ]);
 
-  //                  $messaging->send($message);
+                    //                  $messaging->send($message);
 
                 } else if ($call_type == 'voice') {
                     $message = CloudMessage::fromArray([
@@ -189,7 +190,7 @@ class LoginController extends Controller
                             ],
                         ],
                     ]);
-                    
+
                 } else if ($call_type == 'video') {
                     $message = CloudMessage::fromArray([
                         'token' => $device_token,
@@ -210,7 +211,7 @@ class LoginController extends Controller
                             ],
                         ],
                     ]);
-                    
+
                 }
 
                 $messaging->send($message);
@@ -255,6 +256,40 @@ class LoginController extends Controller
             return ['code' => 0, 'data' => $url, 'msg' => 'success image uploading'];
         } catch (Exception $e) {
             return ['code' => -1, 'data' => '', 'msg' => 'error uploading image'];
+        }
+    }
+
+    public function update_profile(Request $request)
+    {
+        $user = $request->user();
+        $validator = Validator::make($request->all(), [
+            'avatar' => 'required',
+            'name' => 'required',
+            'online' => 'required',
+            'description' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return ['code' => -1, 'data' => 'no valid data', 'msg' => $validator->errors()];
+        }
+        try {
+            $validated = $validator->validated();
+            $map=[];
+            $map['id']=$user->id;
+            $res=User::where($map)->first();
+            if(!empty($res)){
+                $validated['updated_at']=Carbon::now();
+                User::where($map)->update($validated);
+                ['code'=>0,'data'=>$res,'msg'=>'user has been updated'];
+            }
+            ['code'=>1,'data'=>'','msg'=>'error'];
+            
+        } catch (\Throwable $th) {
+            return [
+                'code' => -1,
+                'data' => $th->getMessage(),
+                'msg' => 'error updating profile'
+            ];
+
         }
     }
 }
