@@ -261,7 +261,9 @@ class LoginController extends Controller
 
     public function update_profile(Request $request)
     {
-        $user = $request->user();
+        $token = $request->user_token;
+
+    //    $user = $request->user();
         $validator = Validator::make($request->all(), [
             'avatar' => 'required',
             'name' => 'required',
@@ -269,20 +271,33 @@ class LoginController extends Controller
             'description' => 'required',
         ]);
         if ($validator->fails()) {
-            return ['code' => -1, 'data' => 'no valid data', 'msg' => $validator->errors()];
+            return [
+                'code' => -1,
+                'data' => 'no valid data',
+                'msg' => $validator->errors()->first(),
+            ];
         }
         try {
             $validated = $validator->validated();
-            $map=[];
-            $map['id']=$user->id;
-            $res=User::where($map)->first();
-            if(!empty($res)){
-                $validated['updated_at']=Carbon::now();
+            $map = [];
+         //   $map['id'] = $user->id;
+            $map["token"] = $token;
+
+            $res = User::where($map)->first();
+            if (!empty($res)) {
+                $validated['updated_at'] = Carbon::now();
+        DB::table("users")->where($map)->update($validated);
+
                 User::where($map)->update($validated);
-                ['code'=>0,'data'=>$res,'msg'=>'user has been updated'];
+                return [
+                    'code' => 0,
+               //     'data' => $res,
+                    'data' => '',
+                    'msg' => 'user has been updated',
+                ];
             }
-            ['code'=>1,'data'=>'','msg'=>'error'];
-            
+            return ['code' => -1, 'data' => '', 'msg' => 'error'];
+
         } catch (\Throwable $th) {
             return [
                 'code' => -1,
