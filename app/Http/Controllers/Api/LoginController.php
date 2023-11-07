@@ -251,8 +251,8 @@ class LoginController extends Controller
             $fullFileName = uniqid() . '.' . $extension;
             $timeDir = date('Ymd');
             $file->storeAs($timeDir, $fullFileName, ['disk' => 'public']);
-            //      $url = env('APP_URL') . '/uploads/' . $timeDir . '/' . $fullFileName;
-            $url = $timeDir . '/' . $fullFileName;
+                  $url = env('APP_URL') . '/uploads/' . $timeDir . '/' . $fullFileName;
+          //  $url = $timeDir . '/' . $fullFileName;
             return ['code' => 0, 'data' => $url, 'msg' => 'success image uploading'];
         } catch (Exception $e) {
             return ['code' => -1, 'data' => '', 'msg' => 'error uploading image'];
@@ -286,7 +286,7 @@ class LoginController extends Controller
             $res = User::where($map)->first();
             if (!empty($res)) {
                 $validated['updated_at'] = Carbon::now();
-     //   DB::table("users")->where($map)->update($validated);
+       DB::table("users")->where($map)->update($validated);
 
                 User::where($map)->update($validated);
                 return [
